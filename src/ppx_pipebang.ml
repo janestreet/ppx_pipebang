@@ -28,8 +28,7 @@ let map = object(self)
 end
 
 let () =
-  Ppx_driver.register_code_transformation
-    ~name:"pipebang"
+  Ppx_driver.register_transformation "pipebang"
     ~impl:map#structure
     ~intf:map#signature
 ;;
