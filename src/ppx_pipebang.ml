@@ -11,16 +11,16 @@ let map = object(self)
     let loc = e.pexp_loc in
     match e.pexp_desc with
     | Pexp_apply ({ pexp_desc = Pexp_ident { txt = Lident ("|!" | "|>"); _ }; _ },
-                  [("", x); ("", y)]) -> begin
+                  [(Nolabel, x); (Nolabel, y)]) -> begin
         let x = self#expression x in
         let y = self#expression y in
         match y with
         | { pexp_desc = Pexp_construct (id, None); _ } ->
           { y with pexp_desc = Pexp_construct (id, Some x) }
         | { pexp_desc = Pexp_apply (f, args); pexp_attributes = []; _ } ->
-          { e with pexp_desc = Pexp_apply (f, args @ [("", x)]) }
+          { e with pexp_desc = Pexp_apply (f, args @ [(Nolabel, x)]) }
         | _ ->
-          { e with pexp_desc = Pexp_apply (y, [("", x)]) }
+          { e with pexp_desc = Pexp_apply (y, [(Nolabel, x)]) }
       end
     | Pexp_ident { txt = Lident ("|!" | "|>" as s); _ } ->
       Location.raise_errorf ~loc "%s must be applied to two arguments" s
