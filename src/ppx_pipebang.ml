@@ -1,34 +1,32 @@
 open! StdLabels
-open Ppx_core.Std
-open Parsetree
+open! Ppx_core.Std
 
-[@@@metaloc loc]
-
-let map = object(self)
-  inherit Ast_traverse.map as super
-
-  method! expression e =
-    let loc = e.pexp_loc in
-    match e.pexp_desc with
-    | Pexp_apply ({ pexp_desc = Pexp_ident { txt = Lident ("|!" | "|>"); _ }; _ },
-                  [("", x); ("", y)]) -> begin
-        let x = self#expression x in
-        let y = self#expression y in
+let expand (e : Parsetree.expression) =
+  match e.pexp_desc with
+  | Pexp_apply (_, [("", x); ("", y)]) ->
+      Some (
         match y with
         | { pexp_desc = Pexp_construct (id, None); _ } ->
           { y with pexp_desc = Pexp_construct (id, Some x) }
-        | { pexp_desc = Pexp_apply (f, args); pexp_attributes = []; _ } ->
+        | { pexp_desc = Pexp_apply (f, args); pexp_attributes = []; _ }
+          when (match f.pexp_desc with
+            (* Do not inline |! or |> as this would create applications with too many
+               arguments *)
+            | Pexp_ident { txt = Lident ("|!" | "|>"); _ } -> false
+            | _ -> true) ->
           { e with pexp_desc = Pexp_apply (f, args @ [("", x)]) }
         | _ ->
           { e with pexp_desc = Pexp_apply (y, [("", x)]) }
-      end
-    | Pexp_ident { txt = Lident ("|!" | "|>" as s); _ } ->
-      Location.raise_errorf ~loc "%s must be applied to two arguments" s
-    | _ -> super#expression e
-end
+      )
+  | Pexp_ident { txt = Lident s; _ }
+  | Pexp_apply ({ pexp_desc = Pexp_ident { txt = Lident s; _ }; _ }, _) ->
+    Location.raise_errorf ~loc:e.pexp_loc "%s must be applied to two arguments" s
+  | _ -> None
+;;
 
 let () =
   Ppx_driver.register_transformation "pipebang"
-    ~impl:map#structure
-    ~intf:map#signature
+    ~rules:[ Context_free.Rule.special_function "|!" expand
+           ; Context_free.Rule.special_function "|>" expand
+           ]
 ;;

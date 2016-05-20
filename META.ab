@@ -1,6 +1,6 @@
 version = "$(pkg_version)"
 description = "A ppx rewriter that inlines reverse application operators `|>` and `|!`"
-requires = "ppx_core ppx_driver"
+requires = "compiler-libs.common ppx_core ppx_driver"
 archive(ppx_driver, byte  ) = "ppx_pipebang.cma"
 archive(ppx_driver, native) = "ppx_pipebang.cmxa"
 plugin(ppx_driver, byte  ) = "ppx_pipebang.cma"
