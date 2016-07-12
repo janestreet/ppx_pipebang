@@ -3,7 +3,7 @@ open! Ppx_core.Std
 
 let expand (e : Parsetree.expression) =
   match e.pexp_desc with
-  | Pexp_apply (_, [("", x); ("", y)]) ->
+  | Pexp_apply (_, [(Nolabel, x); (Nolabel, y)]) ->
       Some (
         match y with
         | { pexp_desc = Pexp_construct (id, None); _ } ->
@@ -14,9 +14,9 @@ let expand (e : Parsetree.expression) =
                arguments *)
             | Pexp_ident { txt = Lident ("|!" | "|>"); _ } -> false
             | _ -> true) ->
-          { e with pexp_desc = Pexp_apply (f, args @ [("", x)]) }
+          { e with pexp_desc = Pexp_apply (f, args @ [(Nolabel, x)]) }
         | _ ->
-          { e with pexp_desc = Pexp_apply (y, [("", x)]) }
+          { e with pexp_desc = Pexp_apply (y, [(Nolabel, x)]) }
       )
   | Pexp_ident { txt = Lident s; _ }
   | Pexp_apply ({ pexp_desc = Pexp_ident { txt = Lident s; _ }; _ }, _) ->
