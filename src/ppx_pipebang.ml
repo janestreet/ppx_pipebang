@@ -10,9 +10,9 @@ let expand (e : Parsetree.expression) =
           { y with pexp_desc = Pexp_construct (id, Some x) }
         | { pexp_desc = Pexp_apply (f, args); pexp_attributes = []; _ }
           when (match f.pexp_desc with
-            (* Do not inline |! or |> as this would create applications with too many
+            (* Do not inline |> as this would create applications with too many
                arguments *)
-            | Pexp_ident { txt = Lident ("|!" | "|>"); _ } -> false
+            | Pexp_ident { txt = Lident "|>"; _ } -> false
             | _ -> true) ->
           { e with pexp_desc = Pexp_apply (f, args @ [(Nolabel, x)]) }
         | _ ->
@@ -26,7 +26,5 @@ let expand (e : Parsetree.expression) =
 
 let () =
   Ppx_driver.register_transformation "pipebang"
-    ~rules:[ Context_free.Rule.special_function "|!" expand
-           ; Context_free.Rule.special_function "|>" expand
-           ]
+    ~rules:[ Context_free.Rule.special_function "|>" expand ]
 ;;
