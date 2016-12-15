@@ -1,6 +1,6 @@
 (library
- ((name pa_pipebang_sample)
-  (preprocess (((pps (pa_pipebang)) All)))))
+ ((name ppx_pipebang_sample)
+  (preprocess (pps (ppx_pipebang)))))
 
 (alias ((name DEFAULT)
         (deps (test.ml.pp))))
