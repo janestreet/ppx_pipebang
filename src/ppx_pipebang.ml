@@ -1,5 +1,4 @@
-open! StdLabels
-open! Ppx_core.Std
+open! Ppx_core
 
 let expand (e : Parsetree.expression) =
   match e.pexp_desc with

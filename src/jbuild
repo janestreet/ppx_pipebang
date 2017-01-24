@@ -2,5 +2,5 @@
  ((name ppx_pipebang)
   (public_name ppx_pipebang)
   (kind ppx_rewriter)
-  (libraries (compiler-libs.common ppx_core ppx_driver))
-  (preprocess metaquot)))
+  (libraries (ppx_core ppx_driver))
+  (preprocess (pps (ppx_metaquot)))))
