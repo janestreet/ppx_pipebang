@@ -4,3 +4,5 @@
   (kind ppx_rewriter)
   (libraries (ppx_core ppx_driver))
   (preprocess (pps (ppx_metaquot)))))
+
+(jbuild_version jane_street)
