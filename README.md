@@ -1,3 +1,8 @@
+---
+title: ppx_pipebang
+parent: ../README.md
+---
+
 A ppx rewriter that inlines reverse application operators `|>` and `|!`.
 
 `ppx_pipebang` rewrites `x |> f` and `x |! f` as `f x`, regardless of whether `|>` and
