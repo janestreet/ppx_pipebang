@@ -1,4 +1,4 @@
-open! Ppx_core
+open! Ppxlib
 
 let expand (e : Parsetree.expression) =
   match e.pexp_desc with
@@ -24,6 +24,6 @@ let expand (e : Parsetree.expression) =
 ;;
 
 let () =
-  Ppx_driver.register_transformation "pipebang"
+  Driver.register_transformation "pipebang"
     ~rules:[ Context_free.Rule.special_function "|>" expand ]
 ;;

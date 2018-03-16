@@ -3,8 +3,8 @@
   (public_name ppx_pipebang)
   (kind ppx_rewriter)
   (flags (:standard -safe-string))
-  (libraries (ppx_core ppx_driver))
-  (preprocess (pps (ppx_metaquot ppx_driver.runner)))))
+  (libraries (ppxlib))
+  (preprocess (pps (ppxlib.metaquot ppxlib.runner)))))
 
 
 (jbuild_version 1)
