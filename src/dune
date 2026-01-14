@@ -2,6 +2,6 @@
  (name ppx_pipebang)
  (public_name ppx_pipebang)
  (kind ppx_rewriter)
- (libraries ppxlib)
+ (libraries ppxlib ppxlib_jane)
  (preprocess
   (pps ppxlib.metaquot)))

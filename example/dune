@@ -1,5 +1,6 @@
 (library
  (name ppx_pipebang_sample)
+ (libraries base)
  (preprocess
   (pps ppx_pipebang)))
 
