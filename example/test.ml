@@ -36,5 +36,4 @@ let _flip =
 
 let f x y z = x + y + z
 let _fun = 2 |> f 1 _ 3
-let f ~x = x
 let _op = 2 |> _ - 3
