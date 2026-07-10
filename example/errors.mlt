@@ -1,0 +1,149 @@
+#print_column_numbers true
+
+#reset_line_numbers_after_expect true
+
+open! Base
+
+let duplicate_errors = 2 |> _ + _
+
+[%%expect
+  {|
+Line _, characters 32-33:
+Error: ppx_pipebang: not expecting an expression hole here, expression hole
+       already specified elsewhere.
+|}]
+
+let duplicate_errors = 2 |> (_, _)
+
+[%%expect
+  {|
+Line _, characters 32-33:
+Error: ppx_pipebang: not expecting an expression hole here, expression hole
+       already specified elsewhere.
+|}]
+
+type pair =
+  { a : int
+  ; b : int
+  }
+
+let duplicate_errors = 2 |> { a = _; b = _ }
+
+[%%expect
+  {|
+Line _, characters 41-42:
+Error: ppx_pipebang: not expecting an expression hole here, expression hole
+       already specified elsewhere.
+|}]
+
+let extra_argument map = 2 |> Map.find key _ 4
+
+[%%expect
+  {|
+Line _, characters 30-46:
+Error: The function Map.find has type ('a, 'b, 'c) Map.t -> 'a -> 'b option
+       It is applied to too many arguments
+Line _, characters 45-46:
+  This extra argument is not expected.
+|}]
+
+let extra_argument_is_hole map = 2 |> Map.find key 4 _
+
+[%%expect
+  {|
+Line _, characters 38-54:
+Error: The function Map.find has type ('a, 'b, 'c) Map.t -> 'a -> 'b option
+       It is applied to too many arguments
+Line _, characters 53-54:
+  This extra argument is not expected.
+|}]
+
+let hole_bad_type map = 2 |> Map.find _ "foo"
+
+[%%expect
+  {|
+Line _, characters 38-39:
+Error: This expression has type int but an expression was expected of type
+         ('a, 'b, 'c) Map.t
+|}]
+
+let bad_label map = 12 |> Map.set map _ ~data:10
+
+[%%expect
+  {|
+Line _, characters 38-39:
+Error: The function applied to this argument has type
+         key:'a -> ('a, 'b, 'c) Map.t
+This argument cannot be applied without label
+|}]
+
+let deep_application = 14 |> 15 + (16 + _)
+
+[%%expect
+  {|
+Line _, characters 32-25:
+Error: The function (+) has type int -> int -> int
+       It is applied to too many arguments
+Line _, characters 23-25:
+  This extra argument is not expected.
+|}]
+
+type record =
+  { a : int
+  ; b : record option
+  }
+
+let deep_value = 14 |> { a = 12; b = Some { a = _; b = None } }
+
+[%%expect
+  {|
+Line _, characters 48-49:
+Error: wildcard "_" not expected.
+|}]
+
+type variant =
+  | A of int * int
+  | B of
+      { x : int
+      ; y : int
+      }
+
+let also_a_deep_value = 14 |> A (_, 15)
+
+[%%expect
+  {|
+Line _, characters 30-39:
+Error: ppx_pipebang: The [_] in this expression was not translated by
+       ppx_pipebang because it is not at the top level of the expression.
+       Consider writing [((_), 15) |> A _] instead. See
+       documentation for more info.
+|}]
+
+let yet_another_deep_value = 14 |> B { x = _; y = 15 }
+
+[%%expect
+  {|
+Line _, characters 35-54:
+Error: ppx_pipebang: The [_] in this expression was not translated by
+       ppx_pipebang because it is not at the top level of the expression.
+       Consider writing [{ x = (_); y = 15 } |> B _] instead. See
+       documentation for more info.
+|}]
+
+let useless = 14 |> _
+
+[%%expect
+  {|
+Line _, characters 20-21:
+Error: ppx_pipebang: not expecting an expression hole here, `|> _` not
+       supported.
+|}]
+
+let function_in_hole f = f |> _ 1
+
+[%%expect
+  {|
+Line _, characters 30-31:
+Error: ppx_pipebang: This [_] was not translated by ppx_pipebang. When
+       calling functions, [_] is only supported for arguments.
+|}]
