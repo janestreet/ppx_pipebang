@@ -299,6 +299,8 @@ let expand (e : Parsetree.expression) =
          (match y with
           | { pexp_desc = Pexp_construct (id, None); _ } ->
             { e with pexp_desc = Pexp_construct (id, Some x) }
+          | { pexp_desc = Pexp_variant (label, None); _ } ->
+            { e with pexp_desc = Pexp_variant (label, Some x) }
           | { pexp_desc = Pexp_apply (f, args); pexp_attributes = []; _ }
             when (* Do not inline |> as this would create applications with too many
                     arguments *)

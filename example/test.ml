@@ -18,6 +18,8 @@ let _constr_on_left f = X |> f
 let _constr_on_right x = x |> F
 let _constr_tuple x = x |> (2, _) |> Tuple
 let _constr_record x = x |> { a = 2; b = _ } |> Record
+let _variant_on_left f = `X |> f
+let _variant_on_right x = x |> `X
 
 let _constr_on_left_with_attr f =
   ((X [@ppwarning "warning should be suppressed"]) |> f) [@warning "-preprocessor"]
@@ -25,6 +27,14 @@ let _constr_on_left_with_attr f =
 
 let _constr_on_right_with_attr x =
   ((x [@ppwarning "warning should be suppressed"]) |> F) [@warning "-preprocessor"]
+;;
+
+let _variant_on_left_with_attr f =
+  ((`X [@ppwarning "warning should be suppressed"]) |> f) [@warning "-preprocessor"]
+;;
+
+let _variant_on_right_with_attr x =
+  ((x [@ppwarning "warning should be suppressed"]) |> `X) [@warning "-preprocessor"]
 ;;
 
 (* Examples with [pexp_hole] *)

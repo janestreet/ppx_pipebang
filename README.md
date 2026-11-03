@@ -1,5 +1,4 @@
-ppx_pipebang
-============
+# ppx_pipebang
 
 A ppx rewriter that inlines the reverse application operator `|>`.
 
