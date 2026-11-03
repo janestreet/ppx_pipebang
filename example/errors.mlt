@@ -55,7 +55,7 @@ Line _, characters 38-54:
 Error: The function Map.find has type ('a, 'b, 'c) Map.t -> 'a -> 'b option
        It is applied to too many arguments
 Line _, characters 53-54:
-  This extra argument is not expected.
+This extra argument is not expected.
 |}]
 
 let hole_bad_type map = 2 |> Map.find _ "foo"
@@ -63,7 +63,7 @@ let hole_bad_type map = 2 |> Map.find _ "foo"
 [%%expect
   {|
 Line _, characters 38-39:
-Error: This expression has type int but an expression was expected of type
+Error: The constant 2 has type int but an expression was expected of type
          ('a, 'b, 'c) Map.t
 |}]
 
